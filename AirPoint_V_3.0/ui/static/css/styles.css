@@ -71,7 +71,6 @@ body {
     justify-content: center;
 
 }
-
 #header h1 {
 
     font-size: 32px;
@@ -79,7 +78,6 @@ body {
     margin-bottom: 6px;
 
 }
-
 #header p {
 
     color: #9aa4b2;
@@ -346,7 +344,6 @@ body {
     color: white;
 
 }
-
 /* ========================================= */
 /* CONNECTION STATUS */
 /* ========================================= */
