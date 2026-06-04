@@ -153,14 +153,14 @@ const presentationTouchpad =
         "presentation-touchpad"
     );
 
-const presentationNavigationButton =
+const previousSlideButton =
     document.getElementById(
-        "presentation-navigation-button"
+        "previous-slide-button"
     );
 
-const presentationCursorButton =
+const nextSlideButton =
     document.getElementById(
-        "presentation-cursor-button"
+        "next-slide-button"
     );
 
 const statusIndicator =
@@ -184,9 +184,6 @@ const connectionStatus =
 // =========================================
 
 let currentMode = "normal";
-
-let presentationSubMode =
-    "navigation";
 
 
 // =========================================
@@ -238,11 +235,6 @@ let presentationGestureMode = null;
 let presentationGestureStartTime = 0;
 
 let presentationGestureMoved = false;
-
-let swipeStartX = 0;
-let swipeStartY = 0;
-
-let swipeStartTime = 0;
 
 
 // =========================================
@@ -475,36 +467,6 @@ function switchMode(mode) {
 }
 
 // =========================================
-// PRESENTATION SUB MODE
-// =========================================
-
-function setPresentationSubMode(mode) {
-
-    presentationSubMode = mode;
-
-
-    if (mode === "navigation") {
-
-        presentationNavigationButton.style.background =
-            "#4d7cff";
-
-        presentationCursorButton.style.background =
-            "#202733";
-    }
-
-    else {
-
-        presentationNavigationButton.style.background =
-            "#202733";
-
-        presentationCursorButton.style.background =
-            "#4d7cff";
-    }
-
-}
-
-
-// =========================================
 // MODE BUTTONS
 // =========================================
 
@@ -532,14 +494,14 @@ presentationModeButton.addEventListener(
 );
 
 
-presentationNavigationButton.addEventListener(
+previousSlideButton.addEventListener(
 
     "click",
 
     () => {
 
-        setPresentationSubMode(
-            "navigation"
+        emitSafe(
+            "previous_slide"
         );
 
     }
@@ -547,14 +509,14 @@ presentationNavigationButton.addEventListener(
 );
 
 
-presentationCursorButton.addEventListener(
+nextSlideButton.addEventListener(
 
     "click",
 
     () => {
 
-        setPresentationSubMode(
-            "cursor"
+        emitSafe(
+            "next_slide"
         );
 
     }
@@ -1157,87 +1119,57 @@ presentationTouchpad.addEventListener(
         }
 
 
-        // =====================================
-        // CURSOR MODE
-        // =====================================
+        event.preventDefault();
 
-        if (
-            presentationSubMode ===
-            "cursor"
-        ) {
+        presentationGestureStartTime =
+            Date.now();
 
-            event.preventDefault();
+        presentationGestureMoved =
+            false;
 
-            presentationGestureStartTime =
-                Date.now();
+        if (event.touches.length === 1) {
 
-            presentationGestureMoved =
-                false;
+            presentationGestureMode =
+                "move";
 
-            if (event.touches.length === 1) {
-
-                presentationGestureMode =
-                    "move";
-
-                const touch =
-                    event.touches[0];
+            const touch =
+                event.touches[0];
 
 
-                presentationPreviousX =
-                    touch.clientX;
+            presentationPreviousX =
+                touch.clientX;
 
-                presentationPreviousY =
-                    touch.clientY;
-
-
-                presentationTouchStartX =
-                    touch.clientX;
-
-                presentationTouchStartY =
-                    touch.clientY;
-            }
-
-            else if (event.touches.length === 2) {
-
-                presentationGestureMode =
-                    "scroll";
-
-                const touch1 =
-                    event.touches[0];
-
-                const touch2 =
-                    event.touches[1];
+            presentationPreviousY =
+                touch.clientY;
 
 
-                presentationPreviousY = (
+            presentationTouchStartX =
+                touch.clientX;
 
-                    touch1.clientY +
-
-                    touch2.clientY
-
-                ) / 2;
-            }
-
-            return;
+            presentationTouchStartY =
+                touch.clientY;
         }
 
+        else if (event.touches.length === 2) {
 
-        // =====================================
-        // NAVIGATION MODE
-        // =====================================
+            presentationGestureMode =
+                "scroll";
 
-        const touch =
-            event.touches[0];
+            const touch1 =
+                event.touches[0];
+
+            const touch2 =
+                event.touches[1];
 
 
-        swipeStartX =
-            touch.clientX;
+            presentationPreviousY = (
 
-        swipeStartY =
-            touch.clientY;
+                touch1.clientY +
 
-        swipeStartTime =
-            Date.now();
+                touch2.clientY
+
+            ) / 2;
+        }
 
     },
 
@@ -1261,138 +1193,93 @@ presentationTouchpad.addEventListener(
         }
 
 
+        event.preventDefault();
+
+
+        if (clickLock) {
+            return;
+        }
+
+
         // =====================================
-        // CURSOR MODE
+        // TWO FINGER SCROLL
         // =====================================
 
         if (
-            presentationSubMode ===
-            "cursor"
+
+            presentationGestureMode ===
+            "scroll" &&
+
+            event.touches.length === 2
+
         ) {
 
-            event.preventDefault();
+            const touch1 =
+                event.touches[0];
+
+            const touch2 =
+                event.touches[1];
 
 
-            if (clickLock) {
-                return;
-            }
+            const avgY = (
+
+                touch1.clientY +
+
+                touch2.clientY
+
+            ) / 2;
 
 
-            // =================================
-            // TWO FINGER SCROLL
-            // =================================
+            if (presentationPreviousY !== null) {
 
-            if (
-
-                presentationGestureMode ===
-                "scroll" &&
-
-                event.touches.length === 2
-
-            ) {
-
-                const touch1 =
-                    event.touches[0];
-
-                const touch2 =
-                    event.touches[1];
+                const dy =
+                    avgY - presentationPreviousY;
 
 
-                const avgY = (
+                if (Math.abs(dy) > 4) {
 
-                    touch1.clientY +
-
-                    touch2.clientY
-
-                ) / 2;
-
-
-                if (presentationPreviousY !== null) {
-
-                    const dy =
-                        avgY - presentationPreviousY;
-
-
-                    if (Math.abs(dy) > 4) {
-
-                        presentationGestureMoved =
-                            true;
-                    }
-
-
-                    schedulePresentationScrollFlush(dy);
+                    presentationGestureMoved =
+                        true;
                 }
 
 
-                presentationPreviousY =
-                    avgY;
-
-                return;
+                schedulePresentationScrollFlush(dy);
             }
 
 
-            if (
-                presentationGestureMode !==
-                "move"
-            ) {
-                return;
-            }
+            presentationPreviousY =
+                avgY;
+
+            return;
+        }
 
 
-            const touch =
-                event.touches[0];
+        if (
+            presentationGestureMode !==
+            "move"
+        ) {
+            return;
+        }
 
 
-            const currentX =
-                touch.clientX;
-
-            const currentY =
-                touch.clientY;
+        const touch =
+            event.touches[0];
 
 
-            if (
+        const currentX =
+            touch.clientX;
 
-                presentationPreviousX === null ||
-
-                presentationPreviousY === null
-
-            ) {
-
-                presentationPreviousX =
-                    currentX;
-
-                presentationPreviousY =
-                    currentY;
-
-                return;
-            }
+        const currentY =
+            touch.clientY;
 
 
-            const dx =
-                currentX -
-                presentationPreviousX;
+        if (
 
-            const dy =
-                currentY -
-                presentationPreviousY;
+            presentationPreviousX === null ||
 
+            presentationPreviousY === null
 
-            if (
-
-                Math.abs(
-                    currentX - presentationTouchStartX
-                ) > 12 ||
-
-                Math.abs(
-                    currentY - presentationTouchStartY
-                ) > 12
-
-            ) {
-
-                presentationGestureMoved =
-                    true;
-            }
-
+        ) {
 
             presentationPreviousX =
                 currentX;
@@ -1400,13 +1287,47 @@ presentationTouchpad.addEventListener(
             presentationPreviousY =
                 currentY;
 
-
-            sendMovement(
-                dx * 1.3,
-                dy * 1.3
-            );
-
+            return;
         }
+
+
+        const dx =
+            currentX -
+            presentationPreviousX;
+
+        const dy =
+            currentY -
+            presentationPreviousY;
+
+
+        if (
+
+            Math.abs(
+                currentX - presentationTouchStartX
+            ) > 12 ||
+
+            Math.abs(
+                currentY - presentationTouchStartY
+            ) > 12
+
+        ) {
+
+            presentationGestureMoved =
+                true;
+        }
+
+
+        presentationPreviousX =
+            currentX;
+
+        presentationPreviousY =
+            currentY;
+
+
+        sendMovement(
+            dx * 1.3,
+            dy * 1.3
+        );
 
     },
 
@@ -1430,130 +1351,56 @@ presentationTouchpad.addEventListener(
         }
 
 
-        // =====================================
-        // CURSOR MODE
-        // =====================================
-
-        if (
-            presentationSubMode ===
-            "cursor"
-        ) {
-
-            const duration =
-                Date.now() - presentationGestureStartTime;
-
-
-            if (
-
-                presentationGestureMode ===
-                "move" &&
-
-                !presentationGestureMoved &&
-
-                duration < 300
-
-            ) {
-
-                lockMovementTemporarily();
-
-                emitSafe(
-                    "presentation_cursor_left_click"
-                );
-            }
-
-
-            else if (
-
-                presentationGestureMode ===
-                "scroll" &&
-
-                !presentationGestureMoved &&
-
-                duration < 350
-
-            ) {
-
-                lockMovementTemporarily();
-
-                emitSafe(
-                    "presentation_cursor_right_click"
-                );
-            }
-
-
-            presentationPreviousX =
-                null;
-
-            presentationPreviousY =
-                null;
-
-            presentationGestureMode =
-                null;
-
-            return;
-        }
-
-
-        // =====================================
-        // NAVIGATION MODE
-        // =====================================
-
         const duration =
-            Date.now() - swipeStartTime;
+            Date.now() - presentationGestureStartTime;
 
-
-        if (duration > 500) {
-            return;
-        }
-
-
-        const touch =
-            event.changedTouches[0];
-
-
-        const dx =
-            touch.clientX - swipeStartX;
-
-        const dy =
-            touch.clientY - swipeStartY;
-
-
-        // =====================================
-        // SWIPE DETECTION
-        // =====================================
 
         if (
 
-            Math.abs(dx) > 120 &&
+            presentationGestureMode ===
+            "move" &&
 
-            Math.abs(dy) < 80
+            !presentationGestureMoved &&
+
+            duration < 300
 
         ) {
 
-            // =================================
-            // SWIPE LEFT
-            // =================================
+            lockMovementTemporarily();
 
-                if (dx < 0) {
-
-                emitSafe(
-                    "next_slide"
-                );
-            }
-
-
-            // =================================
-            // SWIPE RIGHT
-            // =================================
-
-                else {
-
-                emitSafe(
-                    "previous_slide"
-                );
-            }
-
+            emitSafe(
+                "presentation_cursor_left_click"
+            );
         }
+
+
+        else if (
+
+            presentationGestureMode ===
+            "scroll" &&
+
+            !presentationGestureMoved &&
+
+            duration < 350
+
+        ) {
+
+            lockMovementTemporarily();
+
+            emitSafe(
+                "presentation_cursor_right_click"
+            );
+        }
+
+
+        presentationPreviousX =
+            null;
+
+        presentationPreviousY =
+            null;
+
+        presentationGestureMode =
+            null;
 
     },
 
@@ -1562,10 +1409,3 @@ presentationTouchpad.addEventListener(
 );
 
 
-// =========================================
-// DEFAULT PRESENTATION MODE
-// =========================================
-
-setPresentationSubMode(
-    "navigation"
-);
