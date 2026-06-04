@@ -1,0 +1,14 @@
+body {
+    background-color: red !important;
+}
+
+
+#touchpad {
+
+    width: 100vw;
+    height: 100vh;
+
+    background: blue;
+
+    border: 20px solid yellow;
+}

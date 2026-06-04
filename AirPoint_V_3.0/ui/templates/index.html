@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AirPoint V2.0</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/styles.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+</head>
+
+<body>
+
+    <div id="app-container">
+
+
+        <!-- ================================= -->
+        <!-- HEADER -->
+        <!-- ================================= -->
+
+        <div id="header">
+
+            <h1>AirPoint</h1>
+
+            <p>
+                Wireless Presentation Controller
+            </p>
+
+            <div id="connection-status">
+
+                <div id="status-indicator"></div>
+
+                    <span id="status-text">
+
+                        Connecting...
+
+                    </span>
+
+            </div>
+
+            <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- NORMAL MODE -->
+        <!-- ================================= -->
+
+        <div id="normal-mode-view">
+
+            <div id="touchpad-container">
+
+                <div id="touchpad">
+
+                    <div id="touchpad-label">
+
+                        Move your finger
+                        <br>
+                        to control the cursor
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- PRESENTATION MODE -->
+        <!-- ================================= -->
+
+        <div id="presentation-mode-view">
+
+            <!-- ================================= -->
+            <!-- PRESENTATION CONTROLS -->
+            <!-- ================================= -->
+
+            <div id="presentation-controls">
+
+                <button id="start-slideshow-button">
+
+                    <i class="fa-solid fa-play"></i>
+
+                    <span>Start</span>
+
+                </button>
+
+
+                <button id="exit-slideshow-button">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    <span>Exit</span>
+
+                </button>
+
+
+                <button id="presentation-navigation-button">
+
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+                    <span>Navigation</span>
+
+                </button>
+
+
+                <button id="presentation-cursor-button">
+
+                    <i class="fa-solid fa-computer-mouse"></i>
+
+                    <span>Cursor</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- ================================= -->
+            <!-- PRESENTATION TOUCHPAD -->
+            <!-- ================================= -->
+
+            <div id="presentation-touchpad">
+
+                <div id="presentation-touchpad-label">
+
+                    Swipe Slides / Cursor Control
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- BOTTOM NAVIGATION -->
+        <!-- ================================= -->
+
+        <div id="bottom-navbar">
+
+            <button
+                id="normal-mode-button"
+                class="nav-button active-nav"
+            >
+
+                <i class="fa-solid fa-computer-mouse"></i>
+
+                <span>Normal</span>
+
+            </button>
+
+
+            <button
+                id="presentation-mode-button"
+                class="nav-button"
+            >
+
+                <i class="fa-solid fa-display"></i>
+
+                <span>Presentation</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        // Robust loader for Socket.IO client with multiple CDN mirrors and local fallback
+        (function loadSocketIo() {
+            const sources = [
+                'https://cdn.socket.io/4.7.5/socket.io.min.js',                             // Official CDN
+                'https://cdn.jsdelivr.net/npm/socket.io-client@4.7.5/dist/socket.io.min.js', // jsDelivr mirror
+                'https://unpkg.com/socket.io-client@4.7.5/dist/socket.io.min.js',             // unpkg mirror
+                '/static/js/socket.io.min.js',                                               // Local backup
+            ];
+
+            function tryLoad(index) {
+                if (index >= sources.length) {
+                    console.error('Failed to load socket.io client from all sources.');
+                    return;
+                }
+
+                const s = document.createElement('script');
+                s.src = sources[index];
+                s.onload = function() {
+                    console.log('Loaded socket.io from', sources[index]);
+                };
+                s.onerror = function() {
+                    console.warn('Failed to load ' + sources[index] + '. Trying next source...');
+                    tryLoad(index + 1);
+                };
+                document.head.appendChild(s);
+            }
+
+            tryLoad(0);
+        })();
+    </script>
+
+    <script src="{{ url_for('static', filename='js/controller.js') }}"></script>
+
+</body>
+
+</html>

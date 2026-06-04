@@ -1,0 +1,18 @@
+HOST ="0.0.0.0"
+PORT = 5000
+DEBUG = False
+
+# ==================================
+# MOVEMENT SETTINGS
+# ==================================
+
+BASE_SENSITIVITY = 2.2
+SMOOTHING_ALPHA = 0.6
+ACCELERATION_FACTOR = 0.02
+MAX_ACCELERATION = 3.5
+DEADZONE = 0.5
+
+TAP_MAX_DURATION = 180
+TAP_MAX_MOVEMENT = 12
+
+SCROLL_SENSITIVITY = 1.2

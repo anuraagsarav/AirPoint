@@ -1,0 +1,409 @@
+/* ========================================= */
+/* GLOBAL */
+/* ========================================= */
+
+* {
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+body {
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #0f1115;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
+
+}
+
+
+/* ========================================= */
+/* APP */
+/* ========================================= */
+
+#app-container {
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+}
+
+
+/* ========================================= */
+/* HEADER */
+/* ========================================= */
+
+#header {
+
+    padding: 18px;
+
+    text-align: center;
+
+    background: #151922;
+
+    border-bottom: 1px solid #252b36;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+#header h1 {
+
+    font-size: 32px;
+
+    margin-bottom: 6px;
+
+}
+
+#header p {
+
+    color: #9aa4b2;
+
+}
+
+
+/* ========================================= */
+/* NORMAL MODE */
+/* ========================================= */
+
+#normal-mode-view {
+
+    flex: 1;
+
+    display: flex;
+
+    overflow: hidden;
+
+}
+
+#touchpad-container {
+
+    flex: 1;
+
+    padding: 18px;
+
+    display: flex;
+
+}
+
+#touchpad {
+
+    flex: 1;
+
+    border-radius: 24px;
+
+    background: linear-gradient(
+        145deg,
+        #171b24,
+        #10141b
+    );
+
+    border: 1px solid #2b3340;
+
+    position: relative;
+
+    touch-action: none;
+
+    overflow: hidden;
+
+}
+
+#touchpad-label {
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    color: #5f6b7a;
+
+    font-size: 20px;
+
+    text-align: center;
+
+    line-height: 1.5;
+
+    width: 100%;
+
+    padding: 0 20px;
+
+    pointer-events: none;
+
+}
+
+
+/* ========================================= */
+/* PRESENTATION MODE */
+/* ========================================= */
+
+#presentation-mode-view {
+
+    flex: 1;
+
+    display: none;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+    padding: 18px;
+
+    gap: 18px;
+
+}
+
+
+/* ========================================= */
+/* PRESENTATION CONTROLS */
+/* ========================================= */
+
+#presentation-controls {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14px;
+
+    flex-shrink: 0;
+
+}
+
+#presentation-controls button {
+
+    height: 80px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    background: #202733;
+
+    color: white;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+}
+
+#presentation-controls button i {
+
+    font-size: 22px;
+
+}
+
+
+/* ========================================= */
+/* PRESENTATION TOUCHPAD */
+/* ========================================= */
+
+#presentation-touchpad {
+
+    flex: 1;
+
+    border-radius: 24px;
+
+    background: linear-gradient(
+        145deg,
+        #171b24,
+        #10141b
+    );
+
+    border: 1px solid #2b3340;
+
+    position: relative;
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+#presentation-touchpad-label {
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    color: #5f6b7a;
+
+    font-size: 20px;
+
+    text-align: center;
+
+    line-height: 1.5;
+
+    width: 100%;
+
+    padding: 0 20px;
+
+    pointer-events: none;
+
+}
+
+
+/* ========================================= */
+/* BOTTOM NAVBAR */
+/* ========================================= */
+
+#bottom-navbar {
+
+    height: 90px;
+
+    background: #12161d;
+
+    border-top: 1px solid #252b36;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-around;
+
+    flex-shrink: 0;
+
+}
+
+.nav-button {
+
+    width: 130px;
+
+    height: 62px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    background: transparent;
+
+    color: #7d8796;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    font-size: 13px;
+
+}
+
+.nav-button i {
+
+    font-size: 20px;
+
+}
+
+.active-nav {
+
+    background: #3c63ff;
+
+    color: white;
+
+}
+
+/* ========================================= */
+/* CONNECTION STATUS */
+/* ========================================= */
+
+#connection-status {
+
+    margin-top: 16px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 10px 18px;
+
+    border-radius: 999px;
+
+    background: #ff4b55;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+}
+
+
+#status-indicator {
+
+    width: 12px;
+    height: 12px;
+
+    border-radius: 50%;
+
+    background: #4dff9a;
+
+    flex-shrink: 0;
+
+    box-shadow:
+        0 0 10px #4dff9a,
+        0 0 20px #4dff9a;
+
+}
+
+
+#status-text {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    line-height: 1;
+
+}

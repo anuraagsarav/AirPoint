@@ -1,0 +1,6 @@
+HOST = "0.0.0.0"
+PORT = 5000
+
+BUFFER_SIZE = 1024
+
+ENCODING = "utf-8"
