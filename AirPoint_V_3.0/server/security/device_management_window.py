@@ -19,10 +19,6 @@ def show_trusted_devices_window():
     window.grid_columnconfigure(0, weight=1)
 
     style = ttk.Style(window)
-    try:
-        style.theme_use("clam")
-    except tk.TclError:
-        pass
 
     style.configure(
         "Custom.Treeview",
@@ -31,6 +27,7 @@ def show_trusted_devices_window():
         fieldbackground="#17202a",
         bordercolor="#1b2833",
         borderwidth=0,
+        relief="flat",
         rowheight=30
     )
     style.configure(
@@ -44,17 +41,46 @@ def show_trusted_devices_window():
         "Custom.Treeview.Heading",
         background=[("active", "#2b3b55")]
     )
+    style.map(
+        "Custom.Treeview",
+        background=[("selected", "#4f6cff")],
+        foreground=[("selected", "white")]
+    )
     style.configure(
         "Accent.TButton",
         background="#4f6cff",
         foreground="white",
         borderwidth=0,
         focusthickness=0,
-        padding=(12, 10)
+        padding=(12, 10),
+        relief="flat"
+    )
+    style.layout(
+        "Accent.TButton",
+        [
+            (
+                "Button.border",
+                {
+                    "sticky": "nswe",
+                    "children": [
+                        (
+                            "Button.padding",
+                            {
+                                "sticky": "nswe",
+                                "children": [
+                                    ("Button.label", {"sticky": "nswe"})
+                                ]
+                            }
+                        )
+                    ]
+                }
+            )
+        ]
     )
     style.map(
         "Accent.TButton",
-        background=[("active", "#6f7dff"), ("!disabled", "#4f6cff")]
+        background=[("active", "#6f7dff"), ("pressed", "#3c51a7"), ("!disabled", "#4f6cff")],
+        foreground=[("disabled", "#a0aabd")]
     )
     style.configure(
         "Secondary.TButton",
@@ -62,12 +88,37 @@ def show_trusted_devices_window():
         foreground="#d7e0f0",
         borderwidth=0,
         focusthickness=0,
-        padding=(12, 10)
+        padding=(12, 10),
+        relief="flat"
+    )
+    style.layout(
+        "Secondary.TButton",
+        [
+            (
+                "Button.border",
+                {
+                    "sticky": "nswe",
+                    "children": [
+                        (
+                            "Button.padding",
+                            {
+                                "sticky": "nswe",
+                                "children": [
+                                    ("Button.label", {"sticky": "nswe"})
+                                ]
+                            }
+                        )
+                    ]
+                }
+            )
+        ]
     )
     style.map(
         "Secondary.TButton",
-        background=[("active", "#2b3a55")]
+        background=[("active", "#2b3a55"), ("pressed", "#1b2433")],
+        foreground=[("disabled", "#7a8ba7")]
     )
+
 
     header_frame = tk.Frame(window, bg="#101823")
     header_frame.grid(row=0, column=0, sticky="ew", padx=16, pady=(16, 0))
@@ -187,25 +238,49 @@ def show_trusted_devices_window():
                     }
                 )
 
-    ttk.Button(
+    tk.Button(
         button_bar,
         text="Remove Device",
         command=remove_selected,
-        style="Accent.TButton"
+        bg="#4f6cff",
+        fg="white",
+        activebackground="#6f7dff",
+        activeforeground="white",
+        bd=0,
+        relief="flat",
+        padx=12,
+        pady=10,
+        highlightthickness=0
     ).pack(side="left", padx=(0, 8))
 
-    ttk.Button(
+    tk.Button(
         button_bar,
         text="Refresh",
         command=refresh,
-        style="Secondary.TButton"
+        bg="#1f2b3d",
+        fg="#d7e0f0",
+        activebackground="#2b3a55",
+        activeforeground="#eef2fb",
+        bd=0,
+        relief="flat",
+        padx=12,
+        pady=10,
+        highlightthickness=0
     ).pack(side="left", padx=(0, 8))
 
-    ttk.Button(
+    tk.Button(
         button_bar,
         text="Export Device List",
         command=export_devices,
-        style="Secondary.TButton"
+        bg="#1f2b3d",
+        fg="#d7e0f0",
+        activebackground="#2b3a55",
+        activeforeground="#eef2fb",
+        bd=0,
+        relief="flat",
+        padx=12,
+        pady=10,
+        highlightthickness=0
     ).pack(side="left")
 
     refresh()

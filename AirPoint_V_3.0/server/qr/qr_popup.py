@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 from PIL import ImageTk
 from PIL import Image
@@ -44,64 +45,51 @@ def show_qr_popup(url):
     root = tk.Tk()
 
     root.title("AirPoint V3.0")
-
-    root.geometry("420x520")
-
-    root.configure(bg="#0f1115")
-
+    root.geometry("440x560")
     root.resizable(False, False)
+    root.configure(bg="#12151d")
+    root.eval("tk::PlaceWindow . center")
 
+    root.option_add("*Menu.background", "#1f2633")
+    root.option_add("*Menu.foreground", "#f5f7fb")
+    root.option_add("*Menu.activeBackground", "#2b3550")
+    root.option_add("*Menu.activeForeground", "#ffffff")
+
+    style = ttk.Style(root)
+    style.configure("Card.TFrame", background="#1f2633")
+    style.configure("Title.TLabel", background="#1f2633", foreground="#f5f7fb", font=("Segoe UI", 20, "bold"))
+    style.configure("Subtitle.TLabel", background="#1f2633", foreground="#a1afcc", font=("Segoe UI", 11))
+    style.configure("Url.TLabel", background="#1f2633", foreground="#8ec9ff", font=("Segoe UI", 10), wraplength=380, justify="center")
+    style.configure("Footer.TLabel", background="#12151d", foreground="#8a98b8", font=("Segoe UI", 9))
+    style.configure("DarkButton.TButton", background="#2b3550", foreground="#f5f7fb", font=("Segoe UI", 10), borderwidth=0)
+    style.map("DarkButton.TButton",
+        background=[("active", "#3a4a70"), ("pressed", "#263251")],
+        foreground=[("disabled", "#7a8ba7")]
+    )
 
     menu_bar = tk.Menu(root)
-
     menu_bar.add_command(
         label="Trusted Devices",
         command=show_trusted_devices_window
     )
-
     root.config(menu=menu_bar)
 
+    content = ttk.Frame(root, style="Card.TFrame", padding=(20, 18, 20, 20))
+    content.pack(expand=True, fill="both", padx=16, pady=16)
 
-    # =====================================
-    # TITLE
-    # =====================================
-
-    title = tk.Label(
-
-        root,
-
+    title = ttk.Label(
+        content,
         text="AirPoint V3.0",
-
-        font=("Arial", 22, "bold"),
-
-        fg="white",
-
-        bg="#0f1115"
-
+        style="Title.TLabel"
     )
+    title.pack(pady=(0, 6))
 
-    title.pack(pady=(20, 10))
-
-
-    # =====================================
-    # SUBTITLE
-    # =====================================
-
-    subtitle = tk.Label(
-
-        root,
-
-        text="Scan QR from your phone",
-
-        font=("Arial", 12),
-
-        fg="#9aa4b2",
-
-        bg="#0f1115"
-
+    subtitle = ttk.Label(
+        content,
+        text="Scan the QR code with your phone",
+        style="Subtitle.TLabel"
     )
-
-    subtitle.pack(pady=(0, 20))
+    subtitle.pack(pady=(0, 18))
 
 
     # =====================================
@@ -109,71 +97,42 @@ def show_qr_popup(url):
     # =====================================
 
     image = Image.open(buffer)
-
     image = image.resize((260, 260))
-
     photo = ImageTk.PhotoImage(image)
 
+    qr_frame = ttk.Frame(content, style="Card.TFrame", padding=12)
+    qr_frame.pack(pady=(0, 12))
 
     qr_label = tk.Label(
-
-        root,
-
+        qr_frame,
         image=photo,
-
-        bg="white"
-
+        bg="#1f2633",
+        relief="flat",
+        bd=0
     )
-
     qr_label.image = photo
-
-    qr_label.pack(pady=10)
-
+    qr_label.pack(padx=4, pady=4)
 
     # =====================================
     # URL TEXT
     # =====================================
 
-    url_label = tk.Label(
-
-        root,
-
+    url_label = ttk.Label(
+        content,
         text=url,
-
-        font=("Arial", 11),
-
-        fg="#57d38c",
-
-        bg="#0f1115",
-
-        wraplength=360,
-
-        justify="center"
-
+        style="Url.TLabel"
     )
-
-    url_label.pack(pady=20)
-
+    url_label.pack(pady=(10, 18))
 
     # =====================================
     # FOOTER
     # =====================================
 
-    footer = tk.Label(
-
+    footer = ttk.Label(
         root,
-
         text="Phone and PC must be on same WiFi",
-
-        font=("Arial", 10),
-
-        fg="#7d8794",
-
-        bg="#0f1115"
-
+        style="Footer.TLabel"
     )
-
-    footer.pack(pady=(10, 0))
-
+    footer.pack(side="bottom", pady=(0, 14))
 
     root.mainloop()
