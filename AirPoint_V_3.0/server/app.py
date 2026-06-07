@@ -37,6 +37,10 @@ from server.security.session_token import (
     is_valid_session_token
 )
 
+from server.networking.mdns_service import (
+    start_mdns_service
+)
+
 app = Flask(
     __name__,
     template_folder="../ui/templates",
@@ -99,6 +103,13 @@ if __name__ == "__main__":
         get_server_id()
     )
 
+    connection_url = generate_connection_url(
+        PORT,
+        get_session_token(),
+        get_server_id()
+    )
+
+    start_mdns_service(PORT)
 
     # =====================================
     # START QR POPUP THREAD

@@ -31,7 +31,10 @@ def get_local_ip():
 def generate_connection_url(port, token=None, server_id=None):
 
     ip = get_local_ip()
+
     url = f"https://{ip}:{port}"
+    #url = f"https://airpoint.local:{port}"
+
     params = []
 
     if token:
