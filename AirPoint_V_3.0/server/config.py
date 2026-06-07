@@ -1,3 +1,5 @@
+from pathlib import Path
+
 HOST ="0.0.0.0"
 PORT = 5000
 DEBUG = False
@@ -11,6 +13,9 @@ SHOW_NETWORK_STATS = False
 # ==================================
 # SECURITY SETTINGS
 # ==================================
+
+SERVER_AUTH_DATA_FILE = "server_auth_data.enc"
+LEGACY_SERVER_AUTH_TOKEN_FILE = "server_auth_token.txt"
 
 DEVELOPER_MODE = False
 

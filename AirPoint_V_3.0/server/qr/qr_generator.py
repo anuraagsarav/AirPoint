@@ -40,13 +40,21 @@ def get_local_ip():
 # GENERATE CONNECTION URL
 # =========================================
 
-def generate_connection_url(port, token=None):
+def generate_connection_url(port, token=None, server_id=None):
 
     ip = get_local_ip()
 
     url = f"http://{ip}:{port}"
 
+    params = []
+
     if token:
-        return f"{url}?token={token}"
+        params.append(f"token={token}")
+
+    if server_id:
+        params.append(f"server_id={server_id}")
+
+    if params:
+        return f"{url}?{'&'.join(params)}"
 
     return url

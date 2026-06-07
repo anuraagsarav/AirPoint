@@ -31,6 +31,7 @@ from server.security.bootstrap import (
 from server.security.security_logger import log_warning
 from server.security.session_token import (
     get_session_token,
+    get_server_id,
     is_valid_session_token
 )
 
@@ -92,7 +93,8 @@ if __name__ == "__main__":
 
     connection_url = generate_connection_url(
         PORT,
-        get_session_token()
+        get_session_token(),
+        get_server_id()
     )
 
 
@@ -104,7 +106,7 @@ if __name__ == "__main__":
 
         target=show_qr_popup,
 
-        args=(connection_url,),
+        args=(connection_url, get_server_id()),
 
         daemon=True
 

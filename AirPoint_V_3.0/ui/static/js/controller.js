@@ -2,8 +2,12 @@
 let socket = null;
 
 const sessionToken = new URLSearchParams(window.location.search).get('token');
+const serverId = new URLSearchParams(window.location.search).get('server_id');
 const deviceId = getOrCreateDeviceId();
 const deviceName = getDeviceName();
+const menuServerId = document.getElementById('menu-server-id');
+const serverMenu = document.getElementById('server-menu');
+const menuButton = document.getElementById('menu-button');
 
 function getOrCreateDeviceId() {
     const storageKey = 'airpoint_device_id';
@@ -444,6 +448,43 @@ function setConnectionStatus(status) {
     }
 
 }
+
+function abbreviateServerId(id) {
+    if (!id) {
+        return "Not available";
+    }
+
+    if (id.length <= 16) {
+        return id;
+    }
+
+    return `${id.slice(0, 8)}…${id.slice(-4)}`;
+}
+
+function initializeServerMenu() {
+    if (menuServerId) {
+        menuServerId.innerText = abbreviateServerId(serverId);
+    }
+
+    if (menuButton && serverMenu) {
+        menuButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            serverMenu.classList.toggle('hidden');
+        });
+
+        serverMenu.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+
+        document.addEventListener('click', () => {
+            if (!serverMenu.classList.contains('hidden')) {
+                serverMenu.classList.add('hidden');
+            }
+        });
+    }
+}
+
+initializeServerMenu();
 
 // =========================================
 // SOCKET EVENTS

@@ -14,10 +14,24 @@ from server.security.device_management_window import (
 
 
 # =========================================
+# UTILITIES
+# =========================================
+
+def abbreviate_server_id(server_id):
+    if not server_id:
+        return None
+
+    if len(server_id) <= 16:
+        return server_id
+
+    return f"{server_id[:8]}…{server_id[-4:]}"
+
+
+# =========================================
 # SHOW QR POPUP
 # =========================================
 
-def show_qr_popup(url):
+def show_qr_popup(url, server_id=None):
 
     # =====================================
     # GENERATE QR
@@ -89,7 +103,17 @@ def show_qr_popup(url):
         text="Scan the QR code with your phone",
         style="Subtitle.TLabel"
     )
-    subtitle.pack(pady=(0, 18))
+    subtitle.pack(pady=(0, 10))
+
+    if server_id:
+        server_label = ttk.Label(
+            content,
+            text=f"Server ID: {abbreviate_server_id(server_id)}",
+            style="Subtitle.TLabel"
+        )
+        server_label.pack(pady=(0, 18))
+    else:
+        subtitle.pack_configure(pady=(0, 18))
 
 
     # =====================================

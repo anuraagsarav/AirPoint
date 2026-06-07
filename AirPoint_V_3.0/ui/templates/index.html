@@ -37,6 +37,10 @@
 
         <div id="header">
 
+            <button id="menu-button" aria-label="Server menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
             <h1>AirPoint</h1>
 
             <p>
@@ -47,12 +51,25 @@
 
                 <div id="status-indicator"></div>
 
-                    <span id="status-text">
+                <span id="status-text">
 
-                        Connecting...
+                    Connecting...
 
-                    </span>
+                </span>
 
+            </div>
+
+            <div id="server-menu" class="hidden">
+                <div id="server-menu-card">
+                    <div id="server-menu-title">Server Info</div>
+                    <div class="server-menu-row">
+                        <span>Abbreviated ID</span>
+                        <strong id="menu-server-id">Not available</strong>
+                    </div>
+                    <div class="server-menu-note">
+                        This is a short display of the current server identifier.
+                    </div>
+                </div>
             </div>
 
             <div id="network-stats-overlay" class="hidden">
