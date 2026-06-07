@@ -43,17 +43,13 @@ def get_local_ip():
 def generate_connection_url(port, token=None, server_id=None):
 
     ip = get_local_ip()
-
-    url = f"http://{ip}:{port}"
-
+    url = f"https://{ip}:{port}"
     params = []
 
     if token:
         params.append(f"token={token}")
-
     if server_id:
         params.append(f"server_id={server_id}")
-
     if params:
         return f"{url}?{'&'.join(params)}"
 

@@ -1,5 +1,7 @@
 import threading
 
+from pathlib import Path
+
 from flask import Flask
 from flask import abort
 from flask import request
@@ -108,6 +110,20 @@ if __name__ == "__main__":
         daemon=True
     )
 
+    CERT_FILE = Path("certs/cert.pem")
+    KEY_FILE = Path("certs/key.pem")
+
+
+    if not CERT_FILE.exists():
+        raise FileNotFoundError(
+            f"Certificate not found: {CERT_FILE}"
+        )
+
+    if not KEY_FILE.exists():
+        raise FileNotFoundError(
+            f"Private key not found: {KEY_FILE}"
+        )
+
     popup_thread.start()
 
 
@@ -116,10 +132,14 @@ if __name__ == "__main__":
     # =====================================
 
     socketio.run(
-        app,
-        host=HOST,
-        port=PORT,
-        debug=DEBUG,
-        allow_unsafe_werkzeug=True
+    app,
+    host=HOST,
+    port=PORT,
+    debug=DEBUG,
+    allow_unsafe_werkzeug=True,
+    ssl_context=(
+        str(CERT_FILE),
+        str(KEY_FILE)
     )
+)
 
