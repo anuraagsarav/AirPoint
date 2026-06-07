@@ -13,6 +13,83 @@ def show_trusted_devices_window():
     window = tk.Toplevel()
     window.title("Trusted Devices")
     window.geometry("860x420")
+    window.minsize(760, 420)
+    window.configure(bg="#111826")
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(0, weight=1)
+
+    style = ttk.Style(window)
+    try:
+        style.theme_use("clam")
+    except tk.TclError:
+        pass
+
+    style.configure(
+        "Custom.Treeview",
+        background="#17202a",
+        foreground="#eef2fb",
+        fieldbackground="#17202a",
+        bordercolor="#1b2833",
+        borderwidth=0,
+        rowheight=30
+    )
+    style.configure(
+        "Custom.Treeview.Heading",
+        background="#1f2d40",
+        foreground="#aab8d6",
+        relief="flat",
+        font=("Segoe UI", 10, "bold")
+    )
+    style.map(
+        "Custom.Treeview.Heading",
+        background=[("active", "#2b3b55")]
+    )
+    style.configure(
+        "Accent.TButton",
+        background="#4f6cff",
+        foreground="white",
+        borderwidth=0,
+        focusthickness=0,
+        padding=(12, 10)
+    )
+    style.map(
+        "Accent.TButton",
+        background=[("active", "#6f7dff"), ("!disabled", "#4f6cff")]
+    )
+    style.configure(
+        "Secondary.TButton",
+        background="#1f2b3d",
+        foreground="#d7e0f0",
+        borderwidth=0,
+        focusthickness=0,
+        padding=(12, 10)
+    )
+    style.map(
+        "Secondary.TButton",
+        background=[("active", "#2b3a55")]
+    )
+
+    header_frame = tk.Frame(window, bg="#101823")
+    header_frame.grid(row=0, column=0, sticky="ew", padx=16, pady=(16, 0))
+    header_frame.grid_columnconfigure(0, weight=1)
+
+    title = tk.Label(
+        header_frame,
+        text="Trusted Devices",
+        font=("Segoe UI", 16, "bold"),
+        fg="#eef2fb",
+        bg="#101823"
+    )
+    title.grid(row=0, column=0, sticky="w")
+
+    subtitle = tk.Label(
+        header_frame,
+        text="Manage devices that are allowed to connect to AirPoint.",
+        font=("Segoe UI", 10),
+        fg="#9aa4b2",
+        bg="#101823"
+    )
+    subtitle.grid(row=1, column=0, sticky="w", pady=(6, 0))
 
     columns = (
         "device_name",
@@ -21,11 +98,21 @@ def show_trusted_devices_window():
         "last_seen"
     )
 
+    table_frame = tk.Frame(window, bg="#111826")
+    table_frame.grid(row=1, column=0, sticky="nsew", padx=16, pady=(12, 0))
+    table_frame.grid_rowconfigure(0, weight=1)
+    table_frame.grid_columnconfigure(0, weight=1)
+
     tree = ttk.Treeview(
-        window,
+        table_frame,
         columns=columns,
-        show="headings"
+        show="headings",
+        style="Custom.Treeview"
     )
+
+    tree.tag_configure("evenrow", background="#17202a")
+    tree.tag_configure("oddrow", background="#1d2b3f")
+    tree.tag_configure("selected", background="#4f6cff", foreground="white")
 
     headings = {
         "device_name": "Device Name",
@@ -38,16 +125,19 @@ def show_trusted_devices_window():
         tree.heading(column, text=heading)
         tree.column(column, width=190, anchor="w")
 
-    tree.pack(fill="both", expand=True, padx=12, pady=(12, 8))
+    tree.grid(row=0, column=0, sticky="nsew")
+    vsb = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
+    tree.configure(yscrollcommand=vsb.set)
+    vsb.grid(row=0, column=1, sticky="ns")
 
-    button_bar = tk.Frame(window)
-    button_bar.pack(fill="x", padx=12, pady=(0, 12))
+    button_bar = tk.Frame(window, bg="#111826")
+    button_bar.grid(row=2, column=0, sticky="ew", padx=16, pady=(12, 16))
 
     def refresh():
         for item in tree.get_children():
             tree.delete(item)
 
-        for device in load_trusted_devices()["trusted_devices"]:
+        for idx, device in enumerate(load_trusted_devices()["trusted_devices"]):
             tree.insert(
                 "",
                 "end",
@@ -56,7 +146,8 @@ def show_trusted_devices_window():
                     device.get("device_id", ""),
                     device.get("first_seen", ""),
                     device.get("last_seen", "")
-                )
+                ),
+                tags=("evenrow",) if idx % 2 == 0 else ("oddrow",)
             )
 
     def remove_selected():
@@ -96,22 +187,25 @@ def show_trusted_devices_window():
                     }
                 )
 
-    tk.Button(
+    ttk.Button(
         button_bar,
         text="Remove Device",
-        command=remove_selected
+        command=remove_selected,
+        style="Accent.TButton"
     ).pack(side="left", padx=(0, 8))
 
-    tk.Button(
+    ttk.Button(
         button_bar,
         text="Refresh",
-        command=refresh
+        command=refresh,
+        style="Secondary.TButton"
     ).pack(side="left", padx=(0, 8))
 
-    tk.Button(
+    ttk.Button(
         button_bar,
         text="Export Device List",
-        command=export_devices
+        command=export_devices,
+        style="Secondary.TButton"
     ).pack(side="left")
 
     refresh()

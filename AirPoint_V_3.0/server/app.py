@@ -10,7 +10,8 @@ from flask_socketio import SocketIO
 from server.config import (
     HOST,
     PORT,
-    DEBUG
+    DEBUG,
+    SHOW_NETWORK_STATS
 )
 
 from server.networking.socket_handler import (
@@ -57,7 +58,7 @@ register_socket_events(socketio)
 @app.before_request
 def validate_control_request_token():
 
-    if request.endpoint == "static":
+    if request.endpoint == "static" or request.path == "/favicon.ico":
         return None
 
     token = request.args.get("token")
@@ -73,10 +74,18 @@ def validate_control_request_token():
     return None
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
+
 @app.route("/")
 def home():
 
-    return render_template("index.html")
+    return render_template(
+        "index.html",
+        show_network_stats=SHOW_NETWORK_STATS
+    )
 
 
 if __name__ == "__main__":

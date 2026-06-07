@@ -109,6 +109,7 @@ function bindSocketEvents() {
 }
 
 
+
 // =========================================
 // DOM ELEMENTS
 // =========================================
@@ -178,6 +179,25 @@ const connectionStatus =
         "connection-status"
     );
 
+const networkStatsOverlay =
+    document.getElementById(
+        "network-stats-overlay"
+    );
+
+const networkLatencyValue =
+    document.getElementById(
+        "network-latency-value"
+    );
+
+const networkSpeedValue =
+    document.getElementById(
+        "network-speed-value"
+    );
+
+const airpointConfig = window.AIRPOINT_CONFIG || {
+    showNetworkStats: false
+};
+
 
 // =========================================
 // MODE STATE
@@ -214,8 +234,6 @@ let deltaY = 0;
 
 let flushScheduled = false;
 
-const MOVE_INTERVAL = 4;
-
 let lastMoveTime = 0;
 let pendingFlushTimer = null;
 
@@ -244,21 +262,34 @@ let presentationGestureMoved = false;
 let networkLatency = 0;
 let packetsSent = 0;
 let packetsAcked = 0;
-let networkQuality = "good";
+let currentNetworkProfile = "high";
 
-const LATENCY_THRESHOLDS = {
-    good: 50,
-    fair: 150,
-    poor: 300
+const NETWORK_LATENCY_THRESHOLDS = {
+    high: 80,
+    medium: 180
 };
 
-const MOVE_INTERVALS = {
-    good: 4,
-    fair: 8,
-    poor: 12
+const NETWORK_SETTINGS = {
+    high: {
+        moveInterval: 0,
+        scrollInterval: 16,
+        sensitivityScale: 1.1
+    },
+    medium: {
+        moveInterval: 16,
+        scrollInterval: 24,
+        sensitivityScale: 1.0
+    },
+    low: {
+        moveInterval: 32,
+        scrollInterval: 40,
+        sensitivityScale: 0.85
+    }
 };
 
-let currentMoveInterval = MOVE_INTERVALS.good;
+let currentMoveInterval = NETWORK_SETTINGS.high.moveInterval;
+let currentScrollInterval = NETWORK_SETTINGS.high.scrollInterval;
+let currentSensitivityScale = NETWORK_SETTINGS.high.sensitivityScale;
 
 let scrollDelta = 0;
 let scrollFlushScheduled = false;
@@ -270,17 +301,48 @@ let lastPresentationScrollTime = 0;
 
 
 function updateNetworkQuality() {
-    if (networkLatency < LATENCY_THRESHOLDS.good) {
-        networkQuality = "good";
-    } else if (networkLatency < LATENCY_THRESHOLDS.fair) {
-        networkQuality = "fair";
+    const previousProfile = currentNetworkProfile;
+
+    if (networkLatency < NETWORK_LATENCY_THRESHOLDS.high) {
+        currentNetworkProfile = "high";
+    } else if (networkLatency < NETWORK_LATENCY_THRESHOLDS.medium) {
+        currentNetworkProfile = "medium";
     } else {
-        networkQuality = "poor";
+        currentNetworkProfile = "low";
     }
 
-    currentMoveInterval = MOVE_INTERVALS[networkQuality];
+    const settings = NETWORK_SETTINGS[currentNetworkProfile];
+    currentMoveInterval = settings.moveInterval;
+    currentScrollInterval = settings.scrollInterval;
+    currentSensitivityScale = settings.sensitivityScale;
+
+    if (previousProfile !== currentNetworkProfile) {
+        console.debug(
+            `Network profile changed to ${currentNetworkProfile}`,
+            `latency=${networkLatency}ms`,
+            `moveInterval=${currentMoveInterval}`
+        );
+    }
+
+    updateNetworkStatsDisplay();
 }
 
+
+function updateNetworkStatsDisplay() {
+    if (!airpointConfig.showNetworkStats || !networkStatsOverlay) {
+        return;
+    }
+
+    networkStatsOverlay.classList.remove('hidden');
+    networkLatencyValue.innerText = `${networkLatency} ms`;
+    networkSpeedValue.innerText = currentNetworkProfile;
+}
+
+function hideNetworkStatsDisplay() {
+    if (networkStatsOverlay) {
+        networkStatsOverlay.classList.add('hidden');
+    }
+}
 
 function measureLatency() {
     const timestamp = Date.now();
@@ -557,11 +619,14 @@ function sendMovement(dx, dy) {
         return;
     }
 
+    const scaledDx = dx * currentSensitivityScale;
+    const scaledDy = dy * currentSensitivityScale;
+
     volatileEmitSafe(
         "mouse_move",
         {
-            dx: dx,
-            dy: dy
+            dx: scaledDx,
+            dy: scaledDy
         }
     );
 
@@ -658,7 +723,7 @@ function scheduleScrollFlush(dy) {
 
     const now = Date.now();
     const elapsed = now - lastScrollTime;
-    const waitTime = Math.max(0, currentMoveInterval * 1.5 - elapsed);
+    const waitTime = Math.max(0, currentScrollInterval - elapsed);
 
     if (waitTime === 0) {
         flushScroll();
@@ -684,7 +749,7 @@ function schedulePresentationScrollFlush(dy) {
 
     const now = Date.now();
     const elapsed = now - lastPresentationScrollTime;
-    const waitTime = Math.max(0, currentMoveInterval * 1.5 - elapsed);
+    const waitTime = Math.max(0, currentScrollInterval - elapsed);
 
     if (waitTime === 0) {
         flushPresentationScroll();
@@ -738,16 +803,12 @@ function scheduleFlush() {
         return;
     }
 
-    const now = Date.now();
-    const elapsed = now - lastMoveTime;
-    const waitTime = Math.max(0, currentMoveInterval - elapsed);
-
-    if (waitTime === 0) {
-        flushMovement();
+    if (currentMoveInterval === 0 && typeof requestAnimationFrame === 'function') {
+        pendingFlushTimer = requestAnimationFrame(flushMovement);
     } else {
         pendingFlushTimer = setTimeout(
             flushMovement,
-            waitTime
+            currentMoveInterval
         );
     }
 }

@@ -404,3 +404,37 @@ body {
     line-height: 1;
 
 }
+#network-stats-overlay {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 190px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(16, 22, 34, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+    color: #d6e0ff;
+    font-size: 12px;
+    line-height: 1.4;
+    z-index: 20;
+}
+
+#network-stats-overlay.hidden {
+    display: none;
+}
+
+#network-stats-header {
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #8aa4ff;
+}
+
+.network-stat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+}

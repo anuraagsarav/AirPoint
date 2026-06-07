@@ -55,6 +55,18 @@
 
             </div>
 
+            <div id="network-stats-overlay" class="hidden">
+                <div id="network-stats-header">Dev Network Info</div>
+                <div class="network-stat-row">
+                    <span>Latency:</span>
+                    <span id="network-latency-value">-- ms</span>
+                </div>
+                <div class="network-stat-row">
+                    <span>Network:</span>
+                    <span id="network-speed-value">--</span>
+                </div>
+            </div>
+
             <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
         </div>
@@ -216,6 +228,12 @@
 
             tryLoad(0);
         })();
+    </script>
+
+    <script>
+        window.AIRPOINT_CONFIG = {
+            showNetworkStats: {{ 'true' if show_network_stats else 'false' }}
+        };
     </script>
 
     <script src="{{ url_for('static', filename='js/controller.js') }}"></script>
