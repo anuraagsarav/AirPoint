@@ -8,6 +8,19 @@ __pycache__/
 # Compiled extensions
 *.so
 
+# Security Keys
+security.key
+auth.key
+trust.key
+
+# Encrypted Security Data
+server_auth_data.enc
+trusted_devices.enc
+
+# Encrypted Security Data
+server_auth_data.enc
+trusted_devices.enc
+
 # Distribution / packaging
 build/
 dist/

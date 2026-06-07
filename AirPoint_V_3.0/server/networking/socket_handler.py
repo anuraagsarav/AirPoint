@@ -83,7 +83,7 @@ def register_socket_events(socketio):
             log_warning(
                 "Invalid session token",
                 ip_address=device_ip,
-                sid=request.sid
+                sid=getattr(request, "sid")
             )
             return False
 
@@ -108,16 +108,16 @@ def register_socket_events(socketio):
                 return False
 
         old_sid = register_device(
-            request.sid,
+            getattr(request, "sid"),
             device_ip
         )
 
         register_authorized_connection(
-            request.sid,
+            getattr(request, "sid"),
             device_id
         )
 
-        if old_sid and old_sid != request.sid:
+        if old_sid and old_sid != getattr(request, "sid"):
             disconnect(old_sid)
 
         log_info(
@@ -131,14 +131,14 @@ def register_socket_events(socketio):
         print("AIRPOINT DEVICE CONNECTED")
         print(f"DEVICE NAME: {device_name}")
         print(f"IP ADDRESS : {device_ip}")
-        print(f"SESSION ID : {request.sid}")
+        print(f"SESSION ID : {getattr(request, 'sid')}")
         print("=================================\n")
 
 
     @socketio.on("disconnect")
     def handle_disconnect():
 
-        device_id = request.sid
+        device_id = getattr(request, "sid")
         remove_device(device_id)
         remove_authorized_connection(device_id)
 
@@ -157,11 +157,11 @@ def register_socket_events(socketio):
 
     @socketio.on("ping")
     def handle_ping(data):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
-        socketio.emit("pong", data, to=request.sid)
+        socketio.emit("pong", data, to=getattr(request, "sid"))
 
 
     # ======================================
@@ -170,7 +170,7 @@ def register_socket_events(socketio):
 
     @socketio.on("set_mode")
     def handle_set_mode(data):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -185,16 +185,16 @@ def register_socket_events(socketio):
 
     @socketio.on("mouse_move")
     def handle_mouse_move(data):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
-        process_movement(data, request.sid)
+        process_movement(data, getattr(request, "sid"))
 
 
     @socketio.on("left_click")
     def handle_left_click(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -206,7 +206,7 @@ def register_socket_events(socketio):
 
     @socketio.on("right_click")
     def handle_right_click(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -218,7 +218,7 @@ def register_socket_events(socketio):
 
     @socketio.on("mouse_scroll")
     def handle_scroll(data):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -234,7 +234,7 @@ def register_socket_events(socketio):
 
     @socketio.on("next_slide")
     def handle_next_slide(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -243,7 +243,7 @@ def register_socket_events(socketio):
 
     @socketio.on("previous_slide")
     def handle_previous_slide(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -252,7 +252,7 @@ def register_socket_events(socketio):
 
     @socketio.on("presentation_cursor_left_click")
     def handle_presentation_cursor_left_click(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -264,7 +264,7 @@ def register_socket_events(socketio):
 
     @socketio.on("presentation_cursor_right_click")
     def handle_presentation_cursor_right_click(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -276,7 +276,7 @@ def register_socket_events(socketio):
 
     @socketio.on("presentation_cursor_scroll")
     def handle_presentation_cursor_scroll(data):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -288,7 +288,7 @@ def register_socket_events(socketio):
 
     @socketio.on("start_presentation")
     def handle_start_presentation(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
@@ -297,7 +297,7 @@ def register_socket_events(socketio):
 
     @socketio.on("exit_presentation")
     def handle_exit_presentation(data=None):
-        if not validate_socket_event(request.sid, data):
+        if not validate_socket_event(getattr(request, "sid"), data):
             disconnect()
             return
 
